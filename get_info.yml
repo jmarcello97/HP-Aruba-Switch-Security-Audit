@@ -1,0 +1,14 @@
+- hosts: 10.0.0.5
+  connection: local
+
+  tasks:
+    - name: run show port-security
+      aruba_command:
+        commands: show port-security
+      register: result
+
+    #- debug: msg="{{ result.stdout_lines }}"
+
+    - name: run security audit
+      security_audit:
+        port_security: "{{ result.stdout_lines[0] }}"
