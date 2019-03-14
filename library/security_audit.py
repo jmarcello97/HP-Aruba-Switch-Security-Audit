@@ -26,7 +26,12 @@ def port_security_audit(module):
 
 	return port_security_config
 
-def generate_audit_report(port_security_config):
+def arp_protect_audit(module):
+	command_output = module.params['arp_protect']
+
+	return str(command_output[3]).strip()
+
+def generate_audit_report(port_security_config, arp_protect_config):
 	f.write("Port Security Results:\n")
 
 	for port in sorted(port_security_config):
@@ -48,18 +53,29 @@ def generate_audit_report(port_security_config):
 
 		if seems_secure == True:
 			f.write("    Seems Secure \n")	
+
+	f.write("\n")
+
+	f.write("Arp Protect Results:\n")
+	if "No" in arp_protect_config:
+		f.write("  ARP protection is currently disabled. Enable to protect against ARP attacks.\n")
+
+	else:
+		f.write("  ARP protection is enabled, good job.\n")
 		
 def main():
 
 	fields = {
-		"port_security": {"required": True, "type": "list"}
+		"port_security": {"required": True, "type": "list"},
+		"arp_protect": {"required": True, "type": "list"}
 	}
 
 	module = AnsibleModule(argument_spec=fields)
 
 	port_security_config = port_security_audit(module)
+	arp_protect_config = arp_protect_audit(module)
 
-	generate_audit_report(port_security_config)
+	generate_audit_report(port_security_config, arp_protect_config)
 
 	module.exit_json(changed=False, meta=module.params, port_security_config=port_security_config)
 
