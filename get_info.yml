@@ -12,7 +12,13 @@
         commands: show arp-protect
       register: arp_protect
 
+    - name: run show dhcp-snooping
+      aruba_command:
+        commands: show dhcp-snooping | i DHCP Snooping
+      register: dhcp_snooping
+
     - name: run security audit
       security_audit:
         port_security: "{{ port_security.stdout_lines[0] }}"
         arp_protect: "{{ arp_protect.stdout_lines[0] }}"
+        dhcp_snooping: "{{ dhcp_snooping.stdout_lines[0] }}"

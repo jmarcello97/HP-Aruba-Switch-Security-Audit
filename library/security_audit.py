@@ -31,7 +31,12 @@ def arp_protect_audit(module):
 
 	return str(command_output[3]).strip()
 
-def generate_audit_report(port_security_config, arp_protect_config):
+def dhcp_snooping_audit(module):
+	command_output = module.params['dhcp_snooping']
+
+	return str(command_output[1]).strip()
+
+def generate_audit_report(port_security_config, arp_protect_config, dhcp_snooping_config):
 	f.write("Port Security Results:\n")
 
 	for port in sorted(port_security_config):
@@ -62,20 +67,29 @@ def generate_audit_report(port_security_config, arp_protect_config):
 
 	else:
 		f.write("  ARP protection is enabled, good job.\n")
+
+	f.write("DHCP Snooping Results:\n")
+	if "No" in arp_protect_config:
+		f.write("  DHCP snooping is currently disabled. Enable to protect against DHCP Snooping attacks.\n")
+	else:
+		f.write("  DHCP snooping is enabled, good job.\n")
+
 		
 def main():
 
 	fields = {
 		"port_security": {"required": True, "type": "list"},
-		"arp_protect": {"required": True, "type": "list"}
+		"arp_protect": {"required": True, "type": "list"},
+		"dhcp_snooping": {"required": True, "type": "list"}
 	}
 
 	module = AnsibleModule(argument_spec=fields)
 
 	port_security_config = port_security_audit(module)
 	arp_protect_config = arp_protect_audit(module)
+	dhcp_snooping_config = dhcp_snooping_audit(module)
 
-	generate_audit_report(port_security_config, arp_protect_config)
+	generate_audit_report(port_security_config, arp_protect_config, dhcp_snooping_config)
 
 	module.exit_json(changed=False, meta=module.params, port_security_config=port_security_config)
 
