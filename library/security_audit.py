@@ -62,14 +62,14 @@ def generate_audit_report(port_security_config, arp_protect_config, dhcp_snoopin
 	f.write("\n")
 
 	f.write("Arp Protect Results:\n")
-	if "No" in arp_protect_config:
+	if "Yes" not in arp_protect_config:
 		f.write("  ARP protection is currently disabled. Enable to protect against ARP attacks.\n")
 
 	else:
 		f.write("  ARP protection is enabled, good job.\n")
 
 	f.write("DHCP Snooping Results:\n")
-	if "No" in arp_protect_config:
+	if "Yes" not in dhcp_snooping_config:
 		f.write("  DHCP snooping is currently disabled. Enable to protect against DHCP Snooping attacks.\n")
 	else:
 		f.write("  DHCP snooping is enabled, good job.\n")
